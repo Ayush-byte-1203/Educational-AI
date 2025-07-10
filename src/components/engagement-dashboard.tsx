@@ -4,17 +4,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Progress } from "@/components/ui/progress";
 import { detectEngagement } from "@/ai/flows/detect-engagement";
 import type { EngagementHistory } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import { Video } from "lucide-react";
+import { Video, Smile, Frown, Meh, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type EngagementDashboardProps = {
   engagementHistory: EngagementHistory;
   setEngagementHistory: React.Dispatch<React.SetStateAction<EngagementHistory>>;
 };
+
+const engagementMeta = {
+    engaged: { icon: Smile, color: 'text-green-500', bgColor: 'bg-green-500/20' },
+    neutral: { icon: Meh, color: 'text-blue-500', bgColor: 'bg-blue-500/20' },
+    disengaged: { icon: Frown, color: 'text-red-500', bgColor: 'bg-red-500/20' },
+    confused: { icon: Brain, color: 'text-yellow-500', bgColor: 'bg-yellow-500/20' },
+};
+
 
 export default function EngagementDashboard({ engagementHistory, setEngagementHistory }: EngagementDashboardProps) {
   const [engagementLevel, setEngagementLevel] = useState("Determining...");
@@ -75,7 +83,7 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
           setEngagementLevel(engagementLevel);
           setSuggestedIntervention(suggestedIntervention);
           const levelKey = engagementLevel.toLowerCase().trim() as keyof EngagementHistory;
-          if (levelKey in engagementHistory) {
+          if (Object.keys(engagementHistory).includes(levelKey)) {
             setEngagementHistory(prev => ({ ...prev, [levelKey]: prev[levelKey] + 1 }));
           }
         } catch (error) {
@@ -91,12 +99,8 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
     };
   }, [isDetecting, setEngagementHistory, engagementHistory]);
 
+  const totalEngagements = Object.values(engagementHistory).reduce((sum, count) => sum + count, 0);
 
-  const chartData = Object.entries(engagementHistory).map(([name, count]) => ({
-    name: name.charAt(0).toUpperCase() + name.slice(1),
-    count,
-  }));
-  
   const getGlowColor = () => {
     switch (engagementLevel.toLowerCase().trim()) {
       case 'engaged':
@@ -127,24 +131,23 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
                 <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
                 <canvas ref={canvasRef} className="hidden" />
             </div>
-            <div className="h-[150px] w-full">
-                <ResponsiveContainer>
-                <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false}/>
-                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                    <Tooltip
-                    cursor={{ fill: 'hsl(var(--accent)/0.2)'}}
-                    contentStyle={{
-                        background: "hsl(var(--background)/0.8)",
-                        backdropFilter: "blur(4px)",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "var(--radius)",
-                    }}
-                    />
-                    <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                </BarChart>
-                </ResponsiveContainer>
+            <div className="space-y-3">
+              {(Object.keys(engagementHistory) as Array<keyof EngagementHistory>).map((key) => {
+                const MetaIcon = engagementMeta[key].icon;
+                const percentage = totalEngagements > 0 ? (engagementHistory[key] / totalEngagements) * 100 : 0;
+                return (
+                  <div key={key} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 font-medium">
+                        <MetaIcon className={cn("w-4 h-4", engagementMeta[key].color)} />
+                        <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                      </div>
+                      <span className="text-muted-foreground">{Math.round(percentage)}%</span>
+                    </div>
+                    <Progress value={percentage} className="h-2 [&>div]:bg-gradient-to-r from-primary/50 to-primary" />
+                  </div>
+                );
+              })}
             </div>
         </div>
 
