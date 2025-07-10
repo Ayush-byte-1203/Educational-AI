@@ -1,8 +1,8 @@
 # Educational AI
 
-
-
 A modern, multimodal AI-powered assistant designed for the classroom. This application provides students with an intelligent partner for a seamless and engaging learning experience, featuring real-time assistance, engagement monitoring, and a comprehensive academic dashboard.
+
+![Preview Homepage](images/homepage.jpeg)
 
 ## ✨ Key Features
 
@@ -83,8 +83,4 @@ Before running the application, you need to set up your environment variables. G
 ## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details.
-# classroom3
-# classroom3
-# classroom3
-# Educational-AI
 # Educational-AI
