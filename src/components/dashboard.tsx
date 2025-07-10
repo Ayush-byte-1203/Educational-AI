@@ -51,7 +51,7 @@ export default function Dashboard() {
                     <Bot className="w-12 h-12 text-primary"/>
                     <div className="space-y-1.5">
                         <CardTitle className="font-headline text-2xl text-primary">
-                            Welcome to your AI Classroom Companion
+                            Welcome to your Educational AI
                         </CardTitle>
                         <CardDescription className="text-primary/80 max-w-2xl">
                             Need help with homework? Want to understand a concept better? Your AI assistant is here to help you excel.

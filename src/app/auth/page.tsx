@@ -16,7 +16,7 @@ export default function AuthPage() {
       <div className="lg:w-1/2 flex flex-col items-center justify-center p-8 lg:p-12 text-center bg-muted/40 h-full">
          <BrainCircuit className="w-24 h-24 text-primary" />
          <h1 className="mt-6 text-4xl lg:text-5xl font-bold font-headline text-primary">
-            Classroom AI Companion
+            Educational AI
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-md">
             Your intelligent partner for a seamless and engaging learning experience.

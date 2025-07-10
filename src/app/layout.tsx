@@ -15,7 +15,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'Classroom AI Companion',
+  title: 'Educational AI',
   description: 'A multimodal AI assistant for classrooms to dynamically answer queries.',
 };
 
