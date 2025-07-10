@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -8,6 +9,7 @@ import { detectEngagement } from "@/ai/flows/detect-engagement";
 import type { EngagementHistory } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { Video } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type EngagementDashboardProps = {
   engagementHistory: EngagementHistory;
@@ -61,14 +63,18 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext("2d");
-        context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+        if (!context) {
+          setIsDetecting(false);
+          return;
+        };
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const photoDataUri = canvas.toDataURL("image/jpeg");
 
         try {
           const { engagementLevel, suggestedIntervention } = await detectEngagement({ photoDataUri });
           setEngagementLevel(engagementLevel);
           setSuggestedIntervention(suggestedIntervention);
-          const levelKey = engagementLevel.toLowerCase() as keyof EngagementHistory;
+          const levelKey = engagementLevel.toLowerCase().trim() as keyof EngagementHistory;
           if (levelKey in engagementHistory) {
             setEngagementHistory(prev => ({ ...prev, [levelKey]: prev[levelKey] + 1 }));
           }
@@ -90,9 +96,24 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
     name: name.charAt(0).toUpperCase() + name.slice(1),
     count,
   }));
+  
+  const getGlowColor = () => {
+    switch (engagementLevel.toLowerCase().trim()) {
+      case 'engaged':
+        return 'shadow-green-500/50';
+      case 'confused':
+        return 'shadow-yellow-500/50';
+      case 'disengaged':
+        return 'shadow-red-500/50';
+      case 'neutral':
+        return 'shadow-blue-500/50';
+      default:
+        return 'shadow-secondary';
+    }
+  };
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle className="font-headline flex items-center gap-2">
           <Video className="w-6 h-6" />
@@ -101,43 +122,45 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
         <CardDescription>Real-time student engagement analysis</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
-          <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
-          <canvas ref={canvasRef} className="hidden" />
+        <div className="grid md:grid-cols-2 gap-4 items-center">
+            <div className={cn("relative aspect-video w-full overflow-hidden rounded-lg border bg-muted transition-all duration-500 shadow-[0_0_15px_5px_rgba(0,0,0,0.3)]", getGlowColor())}>
+                <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
+                <canvas ref={canvasRef} className="hidden" />
+            </div>
+            <div className="h-[150px] w-full">
+                <ResponsiveContainer>
+                <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false}/>
+                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <Tooltip
+                    cursor={{ fill: 'hsl(var(--accent)/0.2)'}}
+                    contentStyle={{
+                        background: "hsl(var(--background)/0.8)",
+                        backdropFilter: "blur(4px)",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "var(--radius)",
+                    }}
+                    />
+                    <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+                </ResponsiveContainer>
+            </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="font-semibold">Status:</div>
+
+        <div className="grid grid-cols-2 gap-4 text-sm items-center">
+          <div className="font-semibold">Current Status:</div>
           <div className="flex justify-end">
-            <Badge variant={isDetecting ? "secondary" : "default"}>{engagementLevel}</Badge>
+            <Badge variant={isDetecting ? "secondary" : "default"} className="min-w-[100px] text-center justify-center">{engagementLevel}</Badge>
           </div>
         </div>
+        
         {suggestedIntervention && (
           <div className="text-sm p-3 bg-accent/20 border border-accent/50 rounded-md">
             <p className="font-semibold text-accent-foreground/80">Suggestion:</p>
             <p className="text-accent-foreground">{suggestedIntervention}</p>
           </div>
         )}
-        <div>
-          <h4 className="text-sm font-semibold mb-2">Engagement History</h4>
-          <div className="h-[150px] w-full">
-            <ResponsiveContainer>
-              <BarChart data={chartData} margin={{ top: 5, right: 0, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false}/>
-                <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                <Tooltip
-                  cursor={{ fill: 'hsl(var(--accent))', opacity: 0.2 }}
-                  contentStyle={{
-                    background: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "var(--radius)",
-                  }}
-                />
-                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
