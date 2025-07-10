@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { EngagementHistory, Settings } from "@/lib/types";
+import type { EngagementHistory } from "@/lib/types";
 import Header from "@/components/header";
 import QueryInput from "@/components/query-input";
 import ResponseDisplay from "@/components/response-display";
 import EngagementDashboard from "@/components/engagement-dashboard";
-import SettingsPanel from "@/components/settings-panel";
 import { useToast } from "@/hooks/use-toast";
 import { generateResponse, GenerateResponseOutput } from "@/ai/flows/generate-response";
 
@@ -18,10 +17,6 @@ export default function ClassroomAICompanion() {
     neutral: 0,
     disengaged: 0,
     confused: 0,
-  });
-  const [settings, setSettings] = useState<Settings>({
-    verbosity: 5,
-    depth: 5,
   });
 
   const { toast } = useToast();
@@ -68,7 +63,6 @@ export default function ClassroomAICompanion() {
               engagementHistory={engagementHistory}
               setEngagementHistory={setEngagementHistory}
             />
-            <SettingsPanel settings={settings} setSettings={setSettings} />
           </div>
         </div>
       </main>

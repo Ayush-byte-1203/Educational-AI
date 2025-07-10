@@ -4,8 +4,3 @@ export type EngagementHistory = {
   disengaged: number;
   confused: number;
 };
-
-export type Settings = {
-  verbosity: number;
-  depth: number;
-};
