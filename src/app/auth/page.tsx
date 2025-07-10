@@ -12,28 +12,34 @@ export default function AuthPage() {
   const toggleView = () => setIsLoginView(!isLoginView);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <div className="w-full max-w-md p-8 space-y-8">
-        <div className="text-center">
-            <div className="flex justify-center items-center mb-4">
-                <BrainCircuit className="w-12 h-12 text-primary" />
-            </div>
-          <h1 className="text-3xl font-bold font-headline text-primary">
+    <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-background">
+      <div className="lg:w-1/2 flex flex-col items-center justify-center p-8 lg:p-12 text-center bg-muted/40 h-full">
+         <BrainCircuit className="w-24 h-24 text-primary" />
+         <h1 className="mt-6 text-4xl lg:text-5xl font-bold font-headline text-primary">
             Classroom AI Companion
           </h1>
-          <p className="text-muted-foreground mt-2">
-            {isLoginView ? "Welcome back! Please sign in to continue." : "Create an account to get started."}
+          <p className="mt-4 text-lg text-muted-foreground max-w-md">
+            Your intelligent partner for a seamless and engaging learning experience.
+          </p>
+      </div>
+      <div className="lg:w-1/2 flex items-center justify-center p-8">
+        <div className="w-full max-w-sm">
+          <h2 className="text-3xl font-bold text-center mb-2">
+            {isLoginView ? "Welcome Back" : "Create an Account"}
+          </h2>
+          <p className="text-center text-muted-foreground mb-6">
+            {isLoginView ? "Sign in to access your dashboard." : "Let's get you started."}
+          </p>
+          
+          {isLoginView ? <LoginForm /> : <SignupForm />}
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            {isLoginView ? "Don't have an account?" : "Already have an account?"}{' '}
+            <button onClick={toggleView} className="font-semibold text-primary hover:underline focus:outline-none">
+              {isLoginView ? 'Sign Up' : 'Sign In'}
+            </button>
           </p>
         </div>
-        
-        {isLoginView ? <LoginForm /> : <SignupForm />}
-
-        <p className="text-center text-sm text-muted-foreground">
-          {isLoginView ? "Don't have an account?" : "Already have an account?"}{' '}
-          <button onClick={toggleView} className="font-semibold text-primary hover:underline focus:outline-none">
-            {isLoginView ? 'Sign Up' : 'Sign In'}
-          </button>
-        </p>
       </div>
     </div>
   );
