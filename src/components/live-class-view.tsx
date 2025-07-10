@@ -14,6 +14,7 @@ import {
   Users,
   MessageSquare,
   PhoneOff,
+  HeartPulse,
 } from "lucide-react";
 import type { EngagementHistory } from "@/lib/types";
 import EngagementDashboard from "@/components/engagement-dashboard";
@@ -21,6 +22,7 @@ import AIChat from "./ai-chat";
 import { cn } from "@/lib/utils";
 import ParticipantsPanel from "./participants-panel";
 import { useToast } from "@/hooks/use-toast";
+import EngagementPanel from "./engagement-panel";
 
 export default function LiveClassView() {
   const [engagementHistory, setEngagementHistory] = useState<EngagementHistory>({
@@ -32,7 +34,7 @@ export default function LiveClassView() {
 
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
-  const [sidebarView, setSidebarView] = useState<"participants" | "chat" | "none">("chat");
+  const [sidebarView, setSidebarView] = useState<"participants" | "chat" | "engagement" | "none">("chat");
   const [stream, setStream] = useState<MediaStream | null>(null);
   const { toast } = useToast();
 
@@ -109,6 +111,9 @@ export default function LiveClassView() {
             <Button variant={isCameraOn ? "secondary" : "destructive"} size="icon" onClick={() => setIsCameraOn(!isCameraOn)}>
               {isCameraOn ? <Video /> : <VideoOff />}
             </Button>
+            <Button variant={sidebarView === 'engagement' ? 'default' : 'secondary'} size="icon" onClick={() => setSidebarView(sidebarView === 'engagement' ? 'none' : 'engagement')}>
+                <HeartPulse />
+            </Button>
             <Button variant={sidebarView === 'participants' ? 'default' : 'secondary'} size="icon" onClick={() => setSidebarView(sidebarView === 'participants' ? 'none' : 'participants')}>
               <Users />
             </Button>
@@ -131,6 +136,14 @@ export default function LiveClassView() {
        <div className={cn("w-[380px] bg-card flex flex-col border-l transition-all duration-300", sidebarView === 'none' ? 'w-0 p-0 border-none' : 'w-[380px] p-4')}>
         {sidebarView === "participants" && <ParticipantsPanel />}
         {sidebarView === "chat" && <AIChat />}
+        {sidebarView === "engagement" && (
+            <EngagementPanel
+                stream={stream}
+                isCameraOn={isCameraOn}
+                engagementHistory={engagementHistory}
+                setEngagementHistory={setEngagementHistory}
+            />
+        )}
       </div>
     </div>
   );
