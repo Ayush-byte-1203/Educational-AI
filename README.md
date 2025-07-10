@@ -2,7 +2,15 @@
 
 A modern, multimodal AI-powered assistant designed for the classroom. This application provides students with an intelligent partner for a seamless and engaging learning experience, featuring real-time assistance, engagement monitoring, and a comprehensive academic dashboard.
 
+Home Page:
 ![Preview Homepage](images/homepage.jpeg)
+
+AI Interface:
+![Preview Homepage](images/aimodel.jpeg)
+
+Live Class Model:
+![Preview Homepage](images/liveclass.png)
+
 
 ## ✨ Key Features
 
