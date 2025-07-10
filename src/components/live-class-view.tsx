@@ -1,9 +1,11 @@
+
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Maximize, Users } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Maximize } from "lucide-react";
 import type { EngagementHistory } from "@/lib/types";
 import EngagementDashboard from "@/components/engagement-dashboard";
 import AIChat from "./ai-chat";
