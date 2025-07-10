@@ -5,7 +5,7 @@ import type { EngagementHistory } from "@/lib/types";
 import EngagementDashboard from "@/components/engagement-dashboard";
 import AIChat from "./ai-chat";
 
-export default function ClassroomAICompanion() {
+export default function AICompanionView() {
   const [engagementHistory, setEngagementHistory] = useState<EngagementHistory>({
     engaged: 0,
     neutral: 0,

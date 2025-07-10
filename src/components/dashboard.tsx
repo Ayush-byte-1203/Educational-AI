@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Book, GraduationCap, CalendarCheck, ClipboardList, ArrowRight, Bot } from "lucide-react";
+import { Book, GraduationCap, CalendarCheck, ClipboardList, ArrowRight, Bot, Video, Radio } from "lucide-react";
 import { Progress } from './ui/progress';
 
 const subjects = [
@@ -19,6 +19,12 @@ const assignments = [
   { title: "WWII Essay", subject: "History", due: "3 days" },
   { title: "Lab Report: Photosynthesis", subject: "Science", due: "1 week" },
 ];
+
+const classes = [
+    { name: "Biology", teacher: "Dr. Smith", time: "10:00 AM", isLive: true },
+    { name: "Geometry", teacher: "Mr. Davison", time: "11:30 AM", isLive: false },
+    { name: "Literature", teacher: "Mrs. Gable", time: "1:00 PM", isLive: false },
+]
 
 export default function Dashboard() {
   return (
@@ -46,6 +52,34 @@ export default function Dashboard() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center gap-2">
+                <Video /> Today's Classes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                {classes.map((c) => (
+                    <Card key={c.name} className={`flex items-center justify-between p-3 ${c.isLive ? 'bg-primary/10' : 'bg-muted/50'}`}>
+                        <div>
+                            <p className="font-semibold">{c.name}</p>
+                            <p className="text-sm text-muted-foreground">{c.teacher}</p>
+                        </div>
+                        {c.isLive ? (
+                            <Link href="/live-class">
+                                <Button size="sm">
+                                    <Radio className="mr-2 animate-pulse"/>
+                                    Join Live
+                                </Button>
+                            </Link>
+                        ) : (
+                            <div className="text-sm font-medium">{c.time}</div>
+                        )}
+                    </Card>
+                ))}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="font-headline flex items-center gap-2">
