@@ -14,6 +14,7 @@ import {
   MessageSquare,
   PhoneOff,
   HeartPulse,
+  Bot,
 } from "lucide-react";
 import type { EngagementHistory } from "@/lib/types";
 import EngagementDashboard from "@/components/engagement-dashboard";
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 import ParticipantsPanel from "./participants-panel";
 import { useToast } from "@/hooks/use-toast";
 import EngagementPanel from "./engagement-panel";
+import ClassChatPanel from "./class-chat-panel";
 
 export default function LiveClassView() {
   const [engagementHistory, setEngagementHistory] = useState<EngagementHistory>({
@@ -33,36 +35,36 @@ export default function LiveClassView() {
 
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
-  const [sidebarView, setSidebarView] = useState<"participants" | "chat" | "engagement" | "none">("chat");
+  const [sidebarView, setSidebarView] = useState<"participants" | "aiChat" | "classChat" | "engagement" | "none">("classChat");
   const [stream, setStream] = useState<MediaStream | null>(null);
   const { toast } = useToast();
   const [currentEngagement, setCurrentEngagement] = useState<keyof EngagementHistory | 'determining' | 'error'>("determining");
 
   useEffect(() => {
     const getCameraPermission = async () => {
-      try {
-        const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
-        setStream(newStream);
-      } catch (error) {
-        console.error("Error accessing camera:", error);
-        setIsCameraOn(false);
-        setStream(null);
-        toast({
-          variant: "destructive",
-          title: "Camera Error",
-          description: "Could not access webcam. Please check permissions.",
-        });
+      if (isCameraOn) {
+        try {
+          const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
+          setStream(newStream);
+        } catch (error) {
+          console.error("Error accessing camera:", error);
+          setIsCameraOn(false);
+          setStream(null);
+          toast({
+            variant: "destructive",
+            title: "Camera Error",
+            description: "Could not access webcam. Please check permissions.",
+          });
+        }
+      } else {
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+          setStream(null);
+        }
       }
     };
 
-    if (isCameraOn) {
-      getCameraPermission();
-    } else {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        setStream(null);
-      }
-    }
+    getCameraPermission();
     
     return () => {
         if (stream) {
@@ -112,8 +114,11 @@ export default function LiveClassView() {
             <Button variant={sidebarView === 'participants' ? 'default' : 'secondary'} size="icon" onClick={() => setSidebarView(sidebarView === 'participants' ? 'none' : 'participants')}>
               <Users />
             </Button>
-            <Button variant={sidebarView === 'chat' ? 'default' : 'secondary'} size="icon" onClick={() => setSidebarView(sidebarView === 'chat' ? 'none' : 'chat')}>
+            <Button variant={sidebarView === 'classChat' ? 'default' : 'secondary'} size="icon" onClick={() => setSidebarView(sidebarView === 'classChat' ? 'none' : 'classChat')}>
               <MessageSquare />
+            </Button>
+            <Button variant={sidebarView === 'aiChat' ? 'default' : 'secondary'} size="icon" onClick={() => setSidebarView(sidebarView === 'aiChat' ? 'none' : 'aiChat')}>
+              <Bot />
             </Button>
           </div>
           <div className="flex items-center">
@@ -130,7 +135,8 @@ export default function LiveClassView() {
       {/* Sidebar */}
        <div className={cn("w-[380px] bg-card flex flex-col border-l transition-all duration-300", sidebarView === 'none' ? 'w-0 p-0 border-none' : 'w-[380px] p-4')}>
         {sidebarView === "participants" && <ParticipantsPanel />}
-        {sidebarView === "chat" && <AIChat />}
+        {sidebarView === "aiChat" && <AIChat />}
+        {sidebarView === "classChat" && <ClassChatPanel />}
         {sidebarView === "engagement" && (
             <EngagementPanel
                 stream={stream}
