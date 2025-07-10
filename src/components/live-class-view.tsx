@@ -122,7 +122,7 @@ export default function LiveClassView() {
             </Button>
           </div>
           <div className="flex items-center">
-            <Link href="/">
+            <Link href="/dashboard">
               <Button variant="destructive" className="gap-2">
                 <PhoneOff />
                 Leave
