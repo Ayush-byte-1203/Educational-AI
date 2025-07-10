@@ -1,13 +1,20 @@
-import Dashboard from "@/components/dashboard";
-import Header from "@/components/header";
+
+import { redirect } from 'next/navigation';
+
+// For now, we will redirect to the auth page by default.
+// In a real app, you would check for a valid session here.
+const isAuthenticated = false;
 
 export default function Home() {
+  if (!isAuthenticated) {
+    redirect('/auth');
+  }
+
+  // This part of the component will only be rendered if the user is authenticated.
+  // We'll replace this with the actual dashboard in a future step.
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <Header />
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
-        <Dashboard />
-      </main>
+    <div>
+        <h1>Welcome to the Dashboard!</h1>
     </div>
   );
 }
