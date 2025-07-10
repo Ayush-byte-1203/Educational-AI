@@ -43,9 +43,9 @@ const attendance = {
 export default function Dashboard() {
   return (
     <div className="container mx-auto">
-      <div className="grid gap-8">
+      <div className="grid gap-6 lg:grid-cols-3">
 
-        <Card className="bg-primary/10 border-primary/20 shadow-lg">
+        <Card className="bg-primary/10 border-primary/20 shadow-lg lg:col-span-3">
             <CardHeader className="flex flex-row items-center justify-between space-x-6">
                 <div className="flex items-center gap-6">
                     <Bot className="w-12 h-12 text-primary"/>
@@ -66,111 +66,111 @@ export default function Dashboard() {
             </CardHeader>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        
           
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader>
-              <CardTitle className="font-headline flex items-center gap-3">
-                <Video className="text-primary"/> Today's Classes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {classes.map((c) => (
-                    <Card key={c.name} className={`flex items-center justify-between p-4 rounded-lg ${c.isLive ? 'bg-primary/10 border-primary/20' : 'bg-muted/50'}`}>
-                        <div>
-                            <p className="font-semibold">{c.name}</p>
-                            <p className="text-sm text-muted-foreground">{c.teacher}</p>
-                        </div>
-                        {c.isLive ? (
-                            <Link href="/live-class">
-                                <Button size="sm">
-                                    <Radio className="mr-2 h-4 w-4 animate-pulse"/>
-                                    Join Live
-                                </Button>
-                            </Link>
-                        ) : (
-                            <div className="text-sm font-medium text-muted-foreground">{c.time}</div>
-                        )}
-                    </Card>
-                ))}
-            </CardContent>
-          </Card>
-          
-          <Card className="shadow-sm hover:shadow-md transition-shadow lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="font-headline flex items-center gap-3">
-                <Book className="text-primary" /> Subject Progress
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {subjects.map((subject) => (
-                <div key={subject.name}>
-                  <div className="flex justify-between items-center mb-2">
-                    <p className="font-medium">{subject.name}</p>
-                    <p className="text-sm text-muted-foreground">{subject.progress}%</p>
-                  </div>
-                  <Progress value={subject.progress} />
-                </div>
+        <Card className="shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader>
+            <CardTitle className="font-headline flex items-center gap-3">
+              <Video className="text-primary"/> Today's Classes
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+              {classes.map((c) => (
+                  <Card key={c.name} className={`flex items-center justify-between p-4 rounded-lg ${c.isLive ? 'bg-primary/10 border-primary/20' : 'bg-muted/50'}`}>
+                      <div>
+                          <p className="font-semibold">{c.name}</p>
+                          <p className="text-sm text-muted-foreground">{c.teacher}</p>
+                      </div>
+                      {c.isLive ? (
+                          <Link href="/live-class">
+                              <Button size="sm">
+                                  <Radio className="mr-2 h-4 w-4 animate-pulse"/>
+                                  Join Live
+                              </Button>
+                          </Link>
+                      ) : (
+                          <div className="text-sm font-medium text-muted-foreground">{c.time}</div>
+                      )}
+                  </Card>
               ))}
-            </CardContent>
-          </Card>
-          
-        </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="shadow-sm hover:shadow-md transition-shadow lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="font-headline flex items-center gap-3">
+              <Book className="text-primary" /> Subject Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {subjects.map((subject) => (
+              <div key={subject.name}>
+                <div className="flex justify-between items-center mb-2">
+                  <p className="font-medium">{subject.name}</p>
+                  <p className="text-sm text-muted-foreground">{subject.progress}%</p>
+                </div>
+                <Progress value={subject.progress} />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+        
+        
 
-        <div className="grid gap-6 md:grid-cols-2">
-            <Card className="shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <CardTitle className="font-headline flex items-center gap-3">
-                    <GraduationCap className="text-primary"/> My Grades
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    {grades.map(item => (
-                        <div key={item.subject} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                            <p className="font-semibold">{item.subject}</p>
-                            <p className="font-bold text-lg text-primary">{item.grade}</p>
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
-            <Card className="shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <CardTitle className="font-headline flex items-center gap-3">
-                    <CalendarCheck className="text-primary"/> Attendance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div>
-                        <div className="flex justify-between items-center mb-2">
-                            <p className="font-medium text-muted-foreground">Overall Attendance</p>
-                            <p className="text-2xl font-bold text-primary">{attendance.percentage}%</p>
-                        </div>
-                        <Progress value={attendance.percentage} />
-                         <p className="text-sm text-muted-foreground mt-2 text-right">Attended {attendance.present} of {attendance.total} classes</p>
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+        
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="font-headline flex items-center gap-3">
+                  <GraduationCap className="text-primary"/> My Grades
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                  {grades.map(item => (
+                      <div key={item.subject} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                          <p className="font-semibold">{item.subject}</p>
+                          <p className="font-bold text-lg text-primary">{item.grade}</p>
+                      </div>
+                  ))}
+              </CardContent>
+          </Card>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="font-headline flex items-center gap-3">
+                  <CalendarCheck className="text-primary"/> Attendance
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                  <div>
+                      <div className="flex justify-between items-center mb-2">
+                          <p className="font-medium text-muted-foreground">Overall Attendance</p>
+                          <p className="text-2xl font-bold text-primary">{attendance.percentage}%</p>
+                      </div>
+                      <Progress value={attendance.percentage} />
+                       <p className="text-sm text-muted-foreground mt-2 text-right">Attended {attendance.present} of {attendance.total} classes</p>
+                  </div>
+              </CardContent>
+          </Card>
+       
 
         <Card className="lg:col-span-3 shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader>
-            <CardTitle className="font-headline flex items-center gap-3">
-            <ClipboardList className="text-primary"/> Upcoming Assignments
-            </CardTitle>
-        </CardHeader>
-        <CardContent>
-            <ul className="space-y-3">
-            {assignments.map(item => (
-                <li key={item.title} className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                    <div>
-                        <p className="font-semibold">{item.title}</p>
-                        <p className="text-sm text-muted-foreground">{item.subject}</p>
-                    </div>
-                    <div className="text-sm font-medium text-right text-muted-foreground">Due: <span className="font-semibold text-foreground">{item.due}</span></div>
-                </li>
-            ))}
-            </ul>
-        </CardContent>
+          <CardHeader>
+              <CardTitle className="font-headline flex items-center gap-3">
+              <ClipboardList className="text-primary"/> Upcoming Assignments
+              </CardTitle>
+          </CardHeader>
+          <CardContent>
+              <ul className="space-y-3">
+              {assignments.map(item => (
+                  <li key={item.title} className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                      <div>
+                          <p className="font-semibold">{item.title}</p>
+                          <p className="text-sm text-muted-foreground">{item.subject}</p>
+                      </div>
+                      <div className="text-sm font-medium text-right text-muted-foreground">Due: <span className="font-semibold text-foreground">{item.due}</span></div>
+                  </li>
+              ))}
+              </ul>
+          </CardContent>
         </Card>
 
       </div>
