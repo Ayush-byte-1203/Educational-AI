@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from 'next/link';
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
@@ -20,6 +20,7 @@ import EngagementDashboard from "@/components/engagement-dashboard";
 import AIChat from "./ai-chat";
 import { cn } from "@/lib/utils";
 import ParticipantsPanel from "./participants-panel";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LiveClassView() {
   const [engagementHistory, setEngagementHistory] = useState<EngagementHistory>({
@@ -32,6 +33,46 @@ export default function LiveClassView() {
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [sidebarView, setSidebarView] = useState<"participants" | "chat" | "none">("chat");
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const { toast } = useToast();
+
+  const getCameraPermission = async () => {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        setStream(null);
+    }
+    try {
+        const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        setStream(newStream);
+    } catch (error) {
+        console.error("Error accessing camera:", error);
+        setIsCameraOn(false);
+        toast({
+            variant: "destructive",
+            title: "Camera Error",
+            description: "Could not access webcam. Please check permissions.",
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (isCameraOn) {
+      getCameraPermission();
+    } else {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        setStream(null);
+      }
+    }
+    
+    return () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCameraOn]);
+
 
   return (
     <div className="flex h-[calc(100vh-120px)] bg-muted/30 rounded-lg overflow-hidden">
@@ -57,6 +98,8 @@ export default function LiveClassView() {
              <EngagementDashboard
               engagementHistory={engagementHistory}
               setEngagementHistory={setEngagementHistory}
+              stream={stream}
+              isCameraOn={isCameraOn}
             />
           </div>
           <div className="flex items-center gap-3">
@@ -92,4 +135,3 @@ export default function LiveClassView() {
     </div>
   );
 }
-
