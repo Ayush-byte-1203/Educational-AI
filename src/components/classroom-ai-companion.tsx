@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { EngagementHistory } from "@/lib/types";
-import Header from "@/components/header";
 import QueryInput from "@/components/query-input";
 import ResponseDisplay from "@/components/response-display";
 import EngagementDashboard from "@/components/engagement-dashboard";
@@ -50,22 +49,19 @@ export default function ClassroomAICompanion() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <Header />
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
-        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-          <div className="flex flex-col gap-6">
-            <ResponseDisplay response={response?.response} isLoading={isGenerating} />
-            <QueryInput onSubmit={handleQuerySubmit} isGenerating={isGenerating} />
-          </div>
-          <div className="flex flex-col gap-6">
-            <EngagementDashboard
-              engagementHistory={engagementHistory}
-              setEngagementHistory={setEngagementHistory}
-            />
-          </div>
+    <main className="flex-1 p-4 md:p-6 lg:p-8">
+      <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+        <div className="flex flex-col gap-6">
+          <ResponseDisplay response={response?.response} isLoading={isGenerating} />
+          <QueryInput onSubmit={handleQuerySubmit} isGenerating={isGenerating} />
         </div>
-      </main>
-    </div>
+        <div className="flex flex-col gap-6">
+          <EngagementDashboard
+            engagementHistory={engagementHistory}
+            setEngagementHistory={setEngagementHistory}
+          />
+        </div>
+      </div>
+    </main>
   );
 }
