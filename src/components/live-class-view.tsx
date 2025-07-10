@@ -38,26 +38,23 @@ export default function LiveClassView() {
   const { toast } = useToast();
   const [currentEngagement, setCurrentEngagement] = useState<keyof EngagementHistory | 'determining' | 'error'>("determining");
 
-  const getCameraPermission = async () => {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        setStream(null);
-    }
-    try {
+  useEffect(() => {
+    const getCameraPermission = async () => {
+      try {
         const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
         setStream(newStream);
-    } catch (error) {
+      } catch (error) {
         console.error("Error accessing camera:", error);
         setIsCameraOn(false);
+        setStream(null);
         toast({
-            variant: "destructive",
-            title: "Camera Error",
-            description: "Could not access webcam. Please check permissions.",
+          variant: "destructive",
+          title: "Camera Error",
+          description: "Could not access webcam. Please check permissions.",
         });
-    }
-  };
+      }
+    };
 
-  useEffect(() => {
     if (isCameraOn) {
       getCameraPermission();
     } else {
@@ -85,7 +82,7 @@ export default function LiveClassView() {
            <Image
             src="https://placehold.co/1280x720.png"
             alt="Teacher's video feed"
-            layout="fill"
+            fill
             objectFit="cover"
             data-ai-hint="lesson lecture"
           />

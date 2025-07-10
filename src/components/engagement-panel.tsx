@@ -133,7 +133,7 @@ export default function EngagementPanel({ engagementHistory, setEngagementHistor
                                 </div>
                                 <span>{Math.round(percentage)}%</span>
                             </div>
-                            <Progress value={percentage} className="h-2 [&>div]:bg-none" style={{'--indicator-bg': `hsl(var(--${value.progressClass.replace('bg-', '')}))`} as any} />
+                            <Progress value={percentage} className="h-2" />
                         </div>
                     )
                 })}
