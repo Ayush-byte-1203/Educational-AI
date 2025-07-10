@@ -1,6 +1,6 @@
 # Educational AI
 
-![Educational AI Dashboard]
+
 
 A modern, multimodal AI-powered assistant designed for the classroom. This application provides students with an intelligent partner for a seamless and engaging learning experience, featuring real-time assistance, engagement monitoring, and a comprehensive academic dashboard.
 
