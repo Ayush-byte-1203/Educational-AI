@@ -1,10 +1,9 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from 'next/link';
 import Image from "next/image";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Mic,
@@ -37,6 +36,7 @@ export default function LiveClassView() {
   const [sidebarView, setSidebarView] = useState<"participants" | "chat" | "engagement" | "none">("chat");
   const [stream, setStream] = useState<MediaStream | null>(null);
   const { toast } = useToast();
+  const [currentEngagement, setCurrentEngagement] = useState<keyof EngagementHistory | 'determining' | 'error'>("determining");
 
   const getCameraPermission = async () => {
     if (stream) {
@@ -98,10 +98,8 @@ export default function LiveClassView() {
         <div className="bg-card p-3 flex justify-between items-center border-t">
           <div className="flex items-center gap-2">
              <EngagementDashboard
-              engagementHistory={engagementHistory}
-              setEngagementHistory={setEngagementHistory}
-              stream={stream}
               isCameraOn={isCameraOn}
+              engagementLevel={currentEngagement}
             />
           </div>
           <div className="flex items-center gap-3">
@@ -142,6 +140,7 @@ export default function LiveClassView() {
                 isCameraOn={isCameraOn}
                 engagementHistory={engagementHistory}
                 setEngagementHistory={setEngagementHistory}
+                setEngagementLevel={setCurrentEngagement}
             />
         )}
       </div>

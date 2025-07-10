@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import EngagementPanel from "./engagement-panel";
 
 export default function AICompanionView() {
   const [engagementHistory, setEngagementHistory] = useState<EngagementHistory>({
@@ -18,6 +19,7 @@ export default function AICompanionView() {
     disengaged: 0,
     confused: 0,
   });
+  const [currentEngagement, setCurrentEngagement] = useState<keyof EngagementHistory | 'determining' | 'error'>("determining");
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const { toast } = useToast();
@@ -78,11 +80,12 @@ export default function AICompanionView() {
                 <Switch id="camera-switch" checked={isCameraOn} onCheckedChange={setIsCameraOn} />
                 <Label htmlFor="camera-switch">Camera On</Label>
             </div>
-            <EngagementDashboard
+            <EngagementPanel
               engagementHistory={engagementHistory}
               setEngagementHistory={setEngagementHistory}
               stream={stream}
               isCameraOn={isCameraOn}
+              setEngagementLevel={setCurrentEngagement}
             />
           </CardContent>
         </Card>

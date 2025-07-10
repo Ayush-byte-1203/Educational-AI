@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
 import { detectEngagement } from "@/ai/flows/detect-engagement";
 import type { EngagementHistory } from "@/lib/types";
 import { Smile, Frown, Meh, Brain, AlertCircle, VideoOff, HeartPulse } from "lucide-react";
@@ -16,6 +15,7 @@ type EngagementPanelProps = {
   setEngagementHistory: React.Dispatch<React.SetStateAction<EngagementHistory>>;
   stream: MediaStream | null;
   isCameraOn: boolean;
+  setEngagementLevel: React.Dispatch<React.SetStateAction<keyof EngagementHistory | 'determining' | 'error'>>;
 };
 
 const engagementMeta: Record<keyof EngagementHistory, { icon: React.ElementType, label: string, color: string, progressClass: string }> = {
@@ -25,18 +25,22 @@ const engagementMeta: Record<keyof EngagementHistory, { icon: React.ElementType,
     confused: { icon: Brain, label: 'Confused', color: 'text-yellow-500', progressClass: 'bg-yellow-500' },
 };
 
-export default function EngagementPanel({ engagementHistory, setEngagementHistory, stream, isCameraOn }: EngagementPanelProps) {
-  const [engagementLevel, setEngagementLevel] = useState<keyof EngagementHistory | 'determining' | 'error'>("determining");
+export default function EngagementPanel({ engagementHistory, setEngagementHistory, stream, isCameraOn, setEngagementLevel }: EngagementPanelProps) {
   const [isDetecting, setIsDetecting] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const intervalRef = useRef<NodeJS.Timeout>();
   const { toast } = useToast();
+  const [localEngagementLevel, setLocalEngagementLevel] = useState<keyof EngagementHistory | 'determining' | 'error'>("determining");
+
+  useEffect(() => {
+      setEngagementLevel(localEngagementLevel);
+  }, [localEngagementLevel, setEngagementLevel]);
 
   useEffect(() => {
     if (isCameraOn && stream && videoRef.current) {
       videoRef.current.srcObject = stream;
-      setEngagementLevel('determining');
+      setLocalEngagementLevel('determining');
     } else if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
@@ -47,6 +51,7 @@ export default function EngagementPanel({ engagementHistory, setEngagementHistor
       intervalRef.current = setInterval(async () => {
         if (videoRef.current && canvasRef.current && !isDetecting) {
           setIsDetecting(true);
+          setLocalEngagementLevel('determining');
           const video = videoRef.current;
           const canvas = canvasRef.current;
           canvas.width = video.videoWidth;
@@ -63,12 +68,14 @@ export default function EngagementPanel({ engagementHistory, setEngagementHistor
             const { engagementLevel: level } = await detectEngagement({ photoDataUri });
             const levelKey = level.toLowerCase().trim() as keyof EngagementHistory;
             if (Object.keys(engagementMeta).includes(levelKey)) {
-              setEngagementLevel(levelKey);
+              setLocalEngagementLevel(levelKey);
               setEngagementHistory(prev => ({ ...prev, [levelKey]: prev[levelKey] + 1 }));
+            } else {
+              setLocalEngagementLevel('error');
             }
           } catch (error) {
             console.error("Engagement detection error", error);
-            setEngagementLevel('error');
+            setLocalEngagementLevel('error');
             toast({
                 variant: 'destructive',
                 title: 'Engagement Detection Failed',
@@ -87,8 +94,8 @@ export default function EngagementPanel({ engagementHistory, setEngagementHistor
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDetecting, setEngagementHistory, isCameraOn, stream]);
 
-  const CurrentIcon = engagementLevel in engagementMeta ? engagementMeta[engagementLevel as keyof EngagementHistory].icon : AlertCircle;
-  const currentColor = engagementLevel in engagementMeta ? engagementMeta[engagementLevel as keyof EngagementHistory].color : 'text-gray-500';
+  const CurrentIcon = localEngagementLevel in engagementMeta ? engagementMeta[localEngagementLevel as keyof EngagementHistory].icon : AlertCircle;
+  const currentColor = localEngagementLevel in engagementMeta ? engagementMeta[localEngagementLevel as keyof EngagementHistory].color : 'text-gray-500';
   const totalEngagements = Object.values(engagementHistory).reduce((a, b) => a + b, 0);
 
   return (
@@ -107,7 +114,7 @@ export default function EngagementPanel({ engagementHistory, setEngagementHistor
                  {isCameraOn && (
                     <div className="absolute bottom-2 left-2 flex items-center gap-2 bg-black/50 text-white p-1.5 rounded-md">
                         <CurrentIcon className={cn("w-5 h-5", currentColor)} />
-                        <span className="capitalize text-sm font-medium">{isDetecting ? 'Analyzing...' : engagementLevel}</span>
+                        <span className="capitalize text-sm font-medium">{isDetecting ? 'Analyzing...' : localEngagementLevel}</span>
                     </div>
                  )}
             </div>
