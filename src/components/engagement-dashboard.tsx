@@ -36,6 +36,7 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const intervalRef = useRef<NodeJS.Timeout>();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (isCameraOn && stream && videoRef.current) {
@@ -73,16 +74,22 @@ export default function EngagementDashboard({ engagementHistory, setEngagementHi
             } catch (error) {
               console.error("Engagement detection error", error);
               setEngagementLevel('error');
+              toast({
+                variant: 'destructive',
+                title: 'Engagement Detection Failed',
+                description: 'Could not analyze engagement. You may have exceeded the API quota.',
+              });
             } finally {
               setIsDetecting(false);
             }
           }
-        }, 5000); // Check engagement every 5 seconds
+        }, 30000); // Check engagement every 30 seconds
     }
 
     return () => {
       if(intervalRef.current) clearInterval(intervalRef.current)
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDetecting, setEngagementHistory, isCameraOn, stream]);
 
   const CurrentIcon = engagementLevel in engagementMeta ? engagementMeta[engagementLevel as keyof EngagementHistory].icon : AlertCircle;
