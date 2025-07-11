@@ -42,7 +42,9 @@ export default function AIChat() {
   return (
     <div className="flex flex-col gap-4 h-full">
         <ResponseDisplay response={response?.response} isLoading={isGenerating} />
-        <QueryInput onSubmit={handleQuerySubmit} isGenerating={isGenerating} />
+        <div className="mt-auto">
+          <QueryInput onSubmit={handleQuerySubmit} isGenerating={isGenerating} />
+        </div>
     </div>
   )
 }

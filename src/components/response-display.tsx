@@ -9,7 +9,7 @@ type ResponseDisplayProps = {
 
 export default function ResponseDisplay({ response, isLoading }: ResponseDisplayProps) {
   return (
-    <Card className="flex-grow flex flex-col">
+    <Card className="flex-grow flex flex-col overflow-y-auto">
       <CardHeader>
         <CardTitle className="font-headline flex items-center gap-2">
             <Bot className="w-6 h-6" />
